@@ -31,7 +31,7 @@ public class DatiAmbientali {
 		
 		try (Connection conn = PostgreSql.getConnection()) {
 			PreparedStatement pstmt = conn.prepareStatement(
-					"INSERT INTO DATO_AMBIENTALE(beacon, batteria, temperatura, lux, x_accellerazione, y_accellerazione, z_accellerazione, timestamp) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+					"INSERT INTO DATO_AMBIENTALE(beacon, batteria, temperatura, lux, x_accellerazione, y_accellerazione, z_accellerazione, timestamp, username) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			pstmt.setString(1, dato.getMacAdd());
 			pstmt.setDouble(2, dato.getBatteria());
 			pstmt.setDouble(3, dato.getTemperatura());
@@ -40,6 +40,7 @@ public class DatiAmbientali {
 			pstmt.setDouble(6, dato.getyAcc());
 			pstmt.setDouble(7, dato.getzAcc());
 			pstmt.setTimestamp(8, new Timestamp(System.currentTimeMillis()));
+			pstmt.setString(9,"mike");
 			pstmt.executeUpdate();
 			pstmt.close();
 			ins = true;
