@@ -26,7 +26,7 @@ public class Beacons {
 			ResultSet rs = stmt.executeQuery("SELECT * FROM beacon");
 
 			while (rs.next()) {
-				beaconList.add(new Beacon(rs.getString("macaddress"), rs.getString("posizione")));
+				beaconList.add(new Beacon(rs.getString("macaddress"), rs.getString("posizione"), rs.getString("piano"), rs.getInt("x"), rs.getInt("y")));
 			}
 			rs.close();
 			stmt.close();

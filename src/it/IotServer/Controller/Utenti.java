@@ -15,7 +15,6 @@ import org.apache.commons.lang3.RandomStringUtils;
 
 import it.IotServer.Model.Risposta;
 import it.IotServer.Model.Utente;
-import it.IotServer.Utility.Notification;
 import it.IotServer.Utility.PostgreSql;
 
 @Path("utenti")
@@ -117,12 +116,7 @@ public class Utenti {
 				pstmt.executeUpdate();
 				inserito = true;
 			}
-			pstmt = conn.prepareStatement("SELECT token_value FROM token ");
-			rs = pstmt.executeQuery();
-
-			while (rs.next()) {
-				Notification.pushFCMNotification(rs.getString("token_value"), "mess di prova", "ciao ho provato che le notifiche funzionano");
-			}
+			
 			rs.close();
 			pstmt.close();
 			conn.close();

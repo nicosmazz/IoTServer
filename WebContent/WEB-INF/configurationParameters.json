@@ -1,0 +1,8 @@
+{
+  "temperatureThreshold" : "60",
+  "lightThreshold" : "0",
+  "xAccThreshold" : "1.5",
+  "yAccThreshold" : "1.5",
+  "zAccThreshold" : "1.5",
+  "batteryThreshold" : "20"
+}

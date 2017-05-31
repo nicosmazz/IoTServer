@@ -28,7 +28,7 @@ public class DatiAmbientali {
 	@Produces("application/json")
 	public Risposta insertDatoAmbientale(DatoAmbientale dato) {
 		boolean ins = false;
-		
+
 		try (Connection conn = PostgreSql.getConnection()) {
 			PreparedStatement pstmt = conn.prepareStatement(
 					"INSERT INTO DATO_AMBIENTALE(beacon, batteria, temperatura, lux, x_accellerazione, y_accellerazione, z_accellerazione, timestamp, username) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
@@ -39,87 +39,65 @@ public class DatiAmbientali {
 			pstmt.setDouble(5, dato.getxAcc());
 			pstmt.setDouble(6, dato.getyAcc());
 			pstmt.setDouble(7, dato.getzAcc());
-			pstmt.setTimestamp(8, new Timestamp(System.currentTimeMillis()));
-			pstmt.setString(9,"mike");
+			pstmt.setTimestamp(8, Timestamp.valueOf(dato.getTimestamp()));
+			pstmt.setString(9, dato.getUsername());
 			pstmt.executeUpdate();
 			pstmt.close();
 			ins = true;
 			// controllo livello batteria beacon
-			if (dato.getBatteria() <= 20) {
+			if (dato.getBatteria() <= MyServlet.batteryThreshold) {
 				Statement query = conn.createStatement();
-				ResultSet resSet = query.executeQuery("SELECT token_value FROM token where username = 'nicosmazz'");
-				Statement query2 = conn.createStatement();
-				ResultSet resSet2 = query2.executeQuery("SELECT posizione FROM beacon where macaddress='" + dato.getMacAdd() + "';");
+				ResultSet resSet = query.executeQuery("SELECT token_value FROM token where username = 'admin'");
 
 				if (resSet.next()) {
-					if (resSet2.next()) {
-						Notification.pushFCMNotification(resSet.getString("token_value"), "Livello Batteria Beacon Basso",
-								"Attenzione la batteria del beacon " + dato.getMacAdd() + " in posizione " + resSet2.getString("posizione") + " è quasi scarica");
-					}
+					Notification.pushFCMNotification(resSet.getString("token_value"), "Batteria", dato.getMacAdd());
+
 				}
 				query.close();
-				query2.close();
 				resSet.close();
-				resSet2.close();
-			}
-			
-			if(dato.getTemperatura() >= 50){
-				Statement query = conn.createStatement();
-				ResultSet resSet = query.executeQuery("SELECT token_value FROM token");
-				Statement query2 = conn.createStatement();
-				ResultSet resSet2 = query2.executeQuery("SELECT posizione FROM beacon where macaddress='" + dato.getMacAdd() + "';");
-				if (resSet2.next()) {
-					while (resSet.next()){
-						Notification.pushFCMNotification(resSet.getString("token_value"), "Pericolo Incendio",
-								"Attenzione pericolo incendio in " + resSet2.getString("posizione"));
-					}
-				}
-				
-				query.close();
-				query2.close();
-				resSet.close();
-				resSet2.close();
-			}
-			
-			if(dato.getLux() <= 0){
-				Statement query = conn.createStatement();
-				ResultSet resSet = query.executeQuery("SELECT token_value FROM token");
-				Statement query2 = conn.createStatement();
-				ResultSet resSet2 = query2.executeQuery("SELECT posizione FROM beacon where macaddress='" + dato.getMacAdd() + "';");
-				if (resSet2.next()) {
-					while (resSet.next()){
-						Notification.pushFCMNotification(resSet.getString("token_value"), "Problema illuminazione",
-								"Attenzione assenza di illuminazione in " + resSet2.getString("posizione"));
-					}
-				}
-				
-				query.close();
-				query2.close();
-				resSet.close();
-				resSet2.close();
-			}
-			
-			if( (dato.getxAcc() >= 1.5 || dato.getxAcc() <= (-1.5) ) || (dato.getyAcc() >= 1.5 || dato.getyAcc() <= (-1.5) ) 
-					|| (dato.getzAcc() >= 1.5 || dato.getzAcc() <= (-1.5) ) ){
-				Statement query = conn.createStatement();
-				ResultSet resSet = query.executeQuery("SELECT token_value FROM token");
-				Statement query2 = conn.createStatement();
-				ResultSet resSet2 = query2.executeQuery("SELECT posizione FROM beacon where macaddress='" + dato.getMacAdd() + "';");
-				if (resSet2.next()) {
-					while (resSet.next()){
-						Notification.pushFCMNotification(resSet.getString("token_value"), "Pericolo Terremoto",
-								"Attenzione rilevato terremoto in " + resSet2.getString("posizione"));
-					}
-				}
-				
-				query.close();
-				query2.close();
-				resSet.close();
-				resSet2.close();
 			}
 
+			// controllo temperatura
+			if (dato.getTemperatura() >= MyServlet.temperatureThreshold) {
+				Statement query = conn.createStatement();
+				ResultSet resSet = query.executeQuery("SELECT token_value FROM token");
+
+				while (resSet.next()) {
+					Notification.pushFCMNotification(resSet.getString("token_value"), "Incendio", dato.getMacAdd());
+				}
+
+				query.close();
+				resSet.close();
+			}
+
+			// controllo illuminazione
+			if (dato.getLux() <= MyServlet.lightThreshold) {
+				Statement query = conn.createStatement();
+				ResultSet resSet = query.executeQuery("SELECT token_value FROM token");
+				
+					while (resSet.next()) {
+						Notification.pushFCMNotification(resSet.getString("token_value"), "Illuminazione", dato.getMacAdd());
+					}
+
+				query.close();
+				resSet.close();
+			}
+
+			// controllo accellerometro
+			if ((dato.getxAcc() >= MyServlet.xAccThreshold || dato.getxAcc() <= (-MyServlet.xAccThreshold))
+					|| (dato.getyAcc() >= MyServlet.yAccThreshold || dato.getyAcc() <= (-MyServlet.yAccThreshold))
+					|| (dato.getzAcc() >= MyServlet.zAccThreshold || dato.getzAcc() <= (-MyServlet.zAccThreshold))) {
+				Statement query = conn.createStatement();
+				ResultSet resSet = query.executeQuery("SELECT token_value FROM token");
+				
+					while (resSet.next()) {
+						Notification.pushFCMNotification(resSet.getString("token_value"), "Terremoto", dato.getMacAdd());
+					}
+
+				query.close();
+				resSet.close();
+			}
 			conn.close();
-			
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -140,7 +118,7 @@ public class DatiAmbientali {
 
 			while (rs.next()) {
 				lastData = new DatoAmbientale(rs.getString("beacon"), rs.getInt("batteria"), rs.getDouble("temperatura"), rs.getDouble("lux"), rs.getDouble("x_accellerazione"),
-						rs.getDouble("y_accellerazione"), rs.getDouble("z_accellerazione"), rs.getString("timestamp"));
+						rs.getDouble("y_accellerazione"), rs.getDouble("z_accellerazione"), String.valueOf(rs.getTimestamp("timestamp")));
 			}
 			conn.close();
 			pstmt.close();

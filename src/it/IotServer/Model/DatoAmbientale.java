@@ -16,11 +16,24 @@ public class DatoAmbientale {
 	private double yAcc;
 	private double zAcc;
 	private String timestamp;
+	private String username;
 	
 	public DatoAmbientale() {
 		super();
 	}
 	
+	public DatoAmbientale(String macAdd, double batteria, double temperatura, double lux, double xAcc, double yAcc, double zAcc, String timestamp, String username) {
+		this.macAdd = macAdd;
+		this.batteria = batteria;
+		this.temperatura = temperatura;
+		this.lux = lux;
+		this.xAcc = xAcc;
+		this.yAcc = yAcc;
+		this.zAcc = zAcc;
+		this.timestamp = timestamp;
+		this.username = username;
+	}
+
 	public DatoAmbientale(String macAdd, double batteria, double temperatura, double lux, double xAcc, double yAcc, double zAcc, String timestamp) {
 		this.macAdd = macAdd;
 		this.batteria = batteria;
@@ -30,6 +43,10 @@ public class DatoAmbientale {
 		this.yAcc = yAcc;
 		this.zAcc = zAcc;
 		this.timestamp = timestamp;
+	}
+	
+	public String getUsername() {
+		return username;
 	}
 
 	public String getMacAdd() {
