@@ -15,6 +15,7 @@ import javax.ws.rs.Produces;
 
 import it.IotServer.Model.DatoAmbientale;
 import it.IotServer.Model.Risposta;
+import it.IotServer.Utility.GoogleMail;
 import it.IotServer.Utility.Notification;
 import it.IotServer.Utility.PostgreSql;
 
@@ -47,11 +48,23 @@ public class DatiAmbientali {
 			// controllo livello batteria beacon
 			if (dato.getBatteria() <= MyServlet.batteryThreshold) {
 				Statement query = conn.createStatement();
-				ResultSet resSet = query.executeQuery("SELECT token_value FROM token where username = 'admin'");
+				//ResultSet resSet = query.executeQuery("SELECT token_value FROM token where username = 'admin'");
+				ResultSet resSet = query.executeQuery("SELECT email FROM utente where username = 'admin'");
 
 				if (resSet.next()) {
-					Notification.pushFCMNotification(resSet.getString("token_value"), "Batteria", dato.getMacAdd());
-
+					//Notification.pushFCMNotification(resSet.getString("token_value"), "Batteria", dato.getMacAdd());
+					PreparedStatement prepStat = conn.prepareStatement("SELECT posizione, x, y FROM beacon where macaddress = ?");
+					prepStat.setString(1, dato.getMacAdd());
+					ResultSet resSet2 = prepStat.executeQuery();
+					if(resSet2.next()){
+						String message = "La batteria del Beacon posizionato in: " + resSet2.getString("posizione") + " alle cordinate, x:" 
+								+ resSet2.getInt("x")+ ", y:" +resSet2.getInt("y") + " sta per esaurirsi." + '\n' 
+								+"E' consigliata la sua sostituzione";
+								GoogleMail.send(resSet.getString("email"),"Batteria Beacon Scarsa",message);
+					}
+					
+					prepStat.close();
+					resSet2.close();
 				}
 				query.close();
 				resSet.close();
