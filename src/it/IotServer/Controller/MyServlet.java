@@ -3,7 +3,7 @@ package it.IotServer.Controller;
 import java.io.File;
 import java.io.FileReader;
 
-
+import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
@@ -13,7 +13,8 @@ import org.json.simple.parser.JSONParser;
 
 @WebListener
 public class MyServlet implements ServletContextListener {
-
+	
+	public static ServletContext servletContext;
 	public static int temperatureThreshold;
 	public static int lightThreshold;
 	public static int batteryThreshold;
@@ -32,7 +33,8 @@ public class MyServlet implements ServletContextListener {
 		try {
 
 			JSONParser jsonParser = new JSONParser();
-			File file = new File(arg0.getServletContext().getRealPath("WEB-INF/configurationParameters.json"));
+			servletContext = arg0.getServletContext();
+			File file = new File(servletContext.getRealPath("WEB-INF/configurationParameters.json"));
 			FileReader reader = new FileReader(file);
 			Object object = jsonParser.parse(reader);
 			JSONObject jsonObject = (JSONObject) object;

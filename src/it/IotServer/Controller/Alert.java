@@ -20,7 +20,7 @@ public class Alert {
 
 	@GET
 	@Path("titolo/{titolo}/luogo/{luogo}")
-	public Risposta validateUser(@PathParam("titolo") String titolo, @PathParam("luogo") String luogo) {
+	public Risposta sendAlertFromJavaApplication(@PathParam("titolo") String titolo, @PathParam("luogo") String luogo) {
 		boolean ris;
 		if(luogo.equals("null")){
 			luogo="";
@@ -29,7 +29,20 @@ public class Alert {
 			Statement query = conn.createStatement();
 			ResultSet resSet = query.executeQuery("SELECT token_value FROM token");
 			while(resSet.next()){
-				Notification.pushFCMNotification(resSet.getString("token_value"), titolo, luogo);
+				String tit;
+				String text;
+				if(titolo.equals("Incendio1")){
+					tit = "Allarme Incendio";
+					text ="Rilevato Incendio nell'edificio, apire l'app per la procedura di evacuazione";
+				} else if(titolo.equals("Terremoto1")){
+					tit = "Allarme Terremoto";
+					text = "Rilevato terremoto, apire l'app per la procedura di evacuazione";
+				} else{
+					tit = "Mancanza di Illuminazione";
+					text = "Rilevato guasto all'illuminazione, aprire l'app per rilevare la posizione del guasto";
+				}
+				
+				Notification.pushFCMNotification(resSet.getString("token_value"), tit, text, titolo, luogo);
 			}
 			query.close();
 			resSet.close();

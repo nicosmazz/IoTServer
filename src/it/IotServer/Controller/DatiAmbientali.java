@@ -76,7 +76,7 @@ public class DatiAmbientali {
 				ResultSet resSet = query.executeQuery("SELECT token_value FROM token");
 
 				while (resSet.next()) {
-					Notification.pushFCMNotification(resSet.getString("token_value"), "Incendio", dato.getMacAdd());
+					Notification.pushFCMNotification(resSet.getString("token_value"), "Allarme Incendio", "Rilevato Incendio nell'edificio, apire l'app per la procedura di evacuazione", "Incendio", dato.getMacAdd());
 				}
 
 				query.close();
@@ -89,7 +89,7 @@ public class DatiAmbientali {
 				ResultSet resSet = query.executeQuery("SELECT token_value FROM token");
 				
 					while (resSet.next()) {
-						Notification.pushFCMNotification(resSet.getString("token_value"), "Illuminazione", dato.getMacAdd());
+						Notification.pushFCMNotification(resSet.getString("token_value"), "Mancanza Di Illuminazione", "Rilevato guasto all'illuminazione, aprire l'app per rilevare la posizione del guasto", "Illuminazione", dato.getMacAdd());
 					}
 
 				query.close();
@@ -104,7 +104,7 @@ public class DatiAmbientali {
 				ResultSet resSet = query.executeQuery("SELECT token_value FROM token");
 				
 					while (resSet.next()) {
-						Notification.pushFCMNotification(resSet.getString("token_value"), "Terremoto", dato.getMacAdd());
+						Notification.pushFCMNotification(resSet.getString("token_value"), "Allarme Terremoto", "Rilevato terremoto, apire l'app per la procedura di evacuazione", "Terremoto", dato.getMacAdd());
 					}
 
 				query.close();

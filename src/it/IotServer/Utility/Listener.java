@@ -38,7 +38,7 @@ public class Listener extends Thread {
 							ResultSet resSet = query.executeQuery("SELECT token_value FROM token ");
 
 							while (resSet.next()) {
-								Notification.pushFCMNotification(resSet.getString("token_value"), "Beacon Cambiati", "Attenzione sono state fatte modifiche alle posizoni dei Beacon");
+								Notification.pushFCMNotification(resSet.getString("token_value"), "Beacon Cambiati", "Attenzione sono state fatte modifiche alle posizoni dei Beacon", null, null);
 							}
 							query.close();
 							resSet.close();
