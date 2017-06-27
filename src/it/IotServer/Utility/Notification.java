@@ -35,6 +35,7 @@ public class Notification {
 			info.put("title", title); // Notification title
 			info.put("body", body); // Notification body
 			info.put("sound", "default");
+			info.put("click_action", "Mappa");
 			String icon = null;
 			if(type.equals("Incendio") || type.equals("Incendio1")){
 				icon = "flame";
