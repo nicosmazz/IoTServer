@@ -60,6 +60,7 @@ public class Utenti {
 
 	// Questo servizio permette di verificare l'esistenza o meno di un determinato utente//
 	@GET
+	@Produces("application/json")
 	@Path("username/{user}/password/{pass}")
 	public Risposta validateUser(@PathParam("user") String username, @PathParam("pass") String pass) {
 
