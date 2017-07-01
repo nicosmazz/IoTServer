@@ -35,10 +35,10 @@ public class Listener extends Thread {
 						// TODO aggiungere invio notifica per cambiamenti posizioni beacon
 						try {
 							Statement query = conn.createStatement();
-							ResultSet resSet = query.executeQuery("SELECT token_value FROM token ");
+							ResultSet resSet = query.executeQuery("SELECT  DISTINCT token_value FROM token ");
 
 							while (resSet.next()) {
-								Notification.pushFCMNotification(resSet.getString("token_value"), "Beacon Cambiati", "Attenzione sono state fatte modifiche alle posizoni dei Beacon", null, null);
+							//	Notification.pushFCMNotification(resSet.getString("token_value"), "Beacon Cambiati", "Attenzione sono state fatte modifiche alle posizoni dei Beacon", "Beacon Cambiati", "nullo");
 							}
 							query.close();
 							resSet.close();
@@ -50,7 +50,7 @@ public class Listener extends Thread {
 
 				// wait a while before checking again for new
 				// notifications
-				Thread.sleep(500);
+				Thread.sleep(10000);
 			} catch (SQLException sqle) {
 				sqle.printStackTrace();
 			} catch (InterruptedException ie) {

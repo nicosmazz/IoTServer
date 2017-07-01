@@ -8,7 +8,7 @@ public class PostgreSql {
 	public static Connection getConnection() throws Exception {
 
 		String DRIVER = "org.postgresql.Driver";
-		String URL = "jdbc:postgresql://localhost:5432/IoTApp";
+		String URL = "jdbc:postgresql://hostiot.ddns.net:5432/IoTApp";
 
 		Connection conn = null;
 		while (conn == null) {
