@@ -49,8 +49,8 @@ public class Notification {
 			icon = "light";
 
 		}
-		//info.put("icon", icon);
-	//	data.put("where", where);
+		info.put("icon", icon);
+		data.put("where", where);
 		data.put("type", type);
 		json.put("notification", info);
 		json.put("data", data);
