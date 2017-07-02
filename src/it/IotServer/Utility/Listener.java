@@ -38,7 +38,7 @@ public class Listener extends Thread {
 							ResultSet resSet = query.executeQuery("SELECT  DISTINCT token_value FROM token ");
 
 							while (resSet.next()) {
-								Notification.pushFCMNotification(resSet.getString("token_value"), "Beacon Cambiati", "Attenzione sono state fatte modifiche alle posizoni dei Beacon", "Beacon Cambiati", "nullo");
+								Notification.pushFCMNotification(resSet.getString("token_value"), "Beacon Cambiati", "Riavviare l'app per aggiornare poszioni beacon", "Beacon Cambiati", "nullo");
 							}
 							query.close();
 							resSet.close();
